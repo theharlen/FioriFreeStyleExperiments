@@ -205,7 +205,41 @@ CLASS ZCL_ZHMPV_SALES_ORDERS_DPC_EXT IMPLEMENTATION.
   endmethod.
 
 
-  method SOHEADERSET_GET_ENTITYSET.
+  METHOD soheaderset_get_entityset.
+
+    DATA: orderids TYPE RANGE OF vbak-vbeln,
+          order TYPE vbak-vbeln.
+
+    LOOP AT it_filter_select_options INTO DATA(filter_sopt).
+      IF filter_sopt-property EQ 'OrderId'.
+        LOOP AT filter_sopt-select_options INTO DATA(select_option).
+          APPEND INITIAL LINE TO orderids ASSIGNING FIELD-SYMBOL(<orderid>).
+          <orderid>-sign    = select_option-sign.
+          <orderid>-option  = select_option-option.
+          order             = |{ select_option-low ALPHA = in }|.
+          <orderid>-low     = order.
+          order             = |{ select_option-high ALPHA = in }|.
+          <orderid>-high    = order.
+        ENDLOOP.
+
+      ENDIF.
+    ENDLOOP.
+
+    SELECT vbeln, erdat, erzet, ernam, netwr, waerk
+        INTO TABLE @DATA(so_headers)
+          FROM vbak
+            WHERE vbeln IN @orderids.
+
+    LOOP AT so_headers INTO DATA(so_header).
+      APPEND INITIAL LINE TO et_entityset ASSIGNING FIELD-SYMBOL(<entity>).
+      <entity>-orderid      = so_header-vbeln.
+      <entity>-createdon    = so_header-erdat.
+      <entity>-createdtime  = so_header-erzet.
+      <entity>-createdby    = so_header-ernam.
+      <entity>-netvalue     = so_header-netwr.
+      <entity>-doccategory  = so_header-waerk.
+    ENDLOOP.
+
 **TRY.
 *CALL METHOD SUPER->SOHEADERSET_GET_ENTITYSET
 *  EXPORTING
@@ -227,7 +261,7 @@ CLASS ZCL_ZHMPV_SALES_ORDERS_DPC_EXT IMPLEMENTATION.
 **  CATCH /iwbep/cx_mgw_busi_exception.
 **  CATCH /iwbep/cx_mgw_tech_exception.
 **ENDTRY.
-  endmethod.
+  ENDMETHOD.
 
 
   method SOHEADERSET_UPDATE_ENTITY.

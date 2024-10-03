@@ -14,12 +14,6 @@
    <TPOOL>
     <item>
      <ID>I</ID>
-     <KEY>001</KEY>
-     <ENTRY>Ordem ID</ENTRY>
-     <LENGTH>132</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
      <KEY>002</KEY>
      <ENTRY>Created On</ENTRY>
      <LENGTH>132</LENGTH>
@@ -46,12 +40,6 @@
      <ID>I</ID>
      <KEY>006</KEY>
      <ENTRY>Doc Category</ENTRY>
-     <LENGTH>132</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
-     <KEY>007</KEY>
-     <ENTRY>Ordem ID</ENTRY>
      <LENGTH>132</LENGTH>
     </item>
     <item>
@@ -204,8 +192,25 @@
      <ENTRY>Logical system</ENTRY>
      <LENGTH>132</LENGTH>
     </item>
+    <item>
+     <ID>I</ID>
+     <KEY>033</KEY>
+     <ENTRY>Order ID</ENTRY>
+     <LENGTH>132</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>034</KEY>
+     <ENTRY>Order ID</ENTRY>
+     <LENGTH>132</LENGTH>
+    </item>
    </TPOOL>
    <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>DEFINE_ASSOCIATIONS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>DEFINE_ASSOCIATIONS</DESCRIPT>
+    </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CMPNAME>DEFINE_MESSASGE</CMPNAME>
      <LANGU>E</LANGU>

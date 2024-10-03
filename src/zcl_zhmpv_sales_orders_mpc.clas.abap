@@ -7,9 +7,9 @@ public section.
 
   types:
   begin of TS_SOHEADER,
-     ORDEMID type I,
-     CREATEDON type TIMESTAMP,
-     CREATEDTIME type TIMESTAMP,
+     ORDERID type C length 10,
+     CREATEDON type string,
+     CREATEDTIME type string,
      CREATEDBY type string,
      NETVALUE type P length 8 decimals 2,
      DOCCATEGORY type string,
@@ -28,8 +28,8 @@ TT_SOHEADER type standard table of TS_SOHEADER .
          tt_text_elements type standard table of ts_text_element with key text_symbol .
   types:
   begin of TS_SOITEMS,
-     ORDEMID type I,
-     ORDEMITEM type I,
+     ORDERID type C length 10,
+     ORDEMITEM type C length 6,
      MATERIAL type C length 40,
      MATERIALDESC type C length 100,
      UNITOFMEASURE type C length 20,
@@ -92,6 +92,9 @@ private section.
   methods DEFINE_MESSASGE
     raising
       /IWBEP/CX_MGW_MED_EXCEPTION .
+  methods DEFINE_ASSOCIATIONS
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
 ENDCLASS.
 
 
@@ -113,6 +116,7 @@ model->set_schema_namespace( 'ZHMPV_SALES_ORDERS_SRV' ).
 define_soheader( ).
 define_soitems( ).
 define_messasge( ).
+define_associations( ).
   endmethod.
 
 
@@ -385,10 +389,11 @@ lo_entity_type = model->create_entity_type( iv_entity_type_name = 'SoHeader' iv_
 *Properties
 ***********************************************************************************************************************************
 
-lo_property = lo_entity_type->create_property( iv_property_name = 'OrdemId' iv_abap_fieldname = 'ORDEMID' ). "#EC NOTEXT
-lo_property->set_label_from_text_element( iv_text_element_symbol = '001' iv_text_element_container = gc_incl_name ).  "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'OrderId' iv_abap_fieldname = 'ORDERID' ). "#EC NOTEXT
+lo_property->set_label_from_text_element( iv_text_element_symbol = '033' iv_text_element_container = gc_incl_name ).  "#EC NOTEXT
 lo_property->set_is_key( ).
-lo_property->set_type_edm_int32( ).
+lo_property->set_type_edm_string( ).
+lo_property->set_maxlength( iv_max_length = 10 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
@@ -400,7 +405,7 @@ lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation( 'sap' )->add(
         iv_value    = 'false' ).
 lo_property = lo_entity_type->create_property( iv_property_name = 'CreatedOn' iv_abap_fieldname = 'CREATEDON' ). "#EC NOTEXT
 lo_property->set_label_from_text_element( iv_text_element_symbol = '002' iv_text_element_container = gc_incl_name ).  "#EC NOTEXT
-lo_property->set_type_edm_datetime( ).
+lo_property->set_type_edm_string( ).
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
@@ -412,7 +417,7 @@ lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation( 'sap' )->add(
         iv_value    = 'false' ).
 lo_property = lo_entity_type->create_property( iv_property_name = 'CreatedTime' iv_abap_fieldname = 'CREATEDTIME' ). "#EC NOTEXT
 lo_property->set_label_from_text_element( iv_text_element_symbol = '003' iv_text_element_container = gc_incl_name ).  "#EC NOTEXT
-lo_property->set_type_edm_datetime( ).
+lo_property->set_type_edm_string( ).
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
@@ -508,10 +513,11 @@ lo_entity_type = model->create_entity_type( iv_entity_type_name = 'SoItems' iv_d
 *Properties
 ***********************************************************************************************************************************
 
-lo_property = lo_entity_type->create_property( iv_property_name = 'OrdemId' iv_abap_fieldname = 'ORDEMID' ). "#EC NOTEXT
-lo_property->set_label_from_text_element( iv_text_element_symbol = '007' iv_text_element_container = gc_incl_name ).  "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'OrderId' iv_abap_fieldname = 'ORDERID' ). "#EC NOTEXT
+lo_property->set_label_from_text_element( iv_text_element_symbol = '034' iv_text_element_container = gc_incl_name ).  "#EC NOTEXT
 lo_property->set_is_key( ).
-lo_property->set_type_edm_int32( ).
+lo_property->set_type_edm_string( ).
+lo_property->set_maxlength( iv_max_length = 10 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
@@ -524,7 +530,8 @@ lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation( 'sap' )->add(
 lo_property = lo_entity_type->create_property( iv_property_name = 'OrdemItem' iv_abap_fieldname = 'ORDEMITEM' ). "#EC NOTEXT
 lo_property->set_label_from_text_element( iv_text_element_symbol = '008' iv_text_element_container = gc_incl_name ).  "#EC NOTEXT
 lo_property->set_is_key( ).
-lo_property->set_type_edm_int32( ).
+lo_property->set_type_edm_string( ).
+lo_property->set_maxlength( iv_max_length = 6 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
@@ -686,7 +693,7 @@ lo_entity_set->set_filter_required( abap_false ).
 *&---------------------------------------------------------------------*
 
 
-  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20241003113500'.                  "#EC NOTEXT
+  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20241003131631'.                  "#EC NOTEXT
   rv_last_modified = super->get_last_modified( ).
   IF rv_last_modified LT lc_gen_date_time.
     rv_last_modified = lc_gen_date_time.
@@ -709,11 +716,11 @@ DATA:
 
 
 clear ls_text_element.
-ls_text_element-artifact_name          = 'OrdemId'.                 "#EC NOTEXT
+ls_text_element-artifact_name          = 'OrderId'.                 "#EC NOTEXT
 ls_text_element-artifact_type          = 'PROP'.                                       "#EC NOTEXT
 ls_text_element-parent_artifact_name   = 'SoHeader'.                            "#EC NOTEXT
 ls_text_element-parent_artifact_type   = 'ETYP'.                                       "#EC NOTEXT
-ls_text_element-text_symbol            = '001'.              "#EC NOTEXT
+ls_text_element-text_symbol            = '033'.              "#EC NOTEXT
 APPEND ls_text_element TO rt_text_elements.
 clear ls_text_element.
 ls_text_element-artifact_name          = 'CreatedOn'.                 "#EC NOTEXT
@@ -753,11 +760,11 @@ APPEND ls_text_element TO rt_text_elements.
 
 
 clear ls_text_element.
-ls_text_element-artifact_name          = 'OrdemId'.                 "#EC NOTEXT
+ls_text_element-artifact_name          = 'OrderId'.                 "#EC NOTEXT
 ls_text_element-artifact_type          = 'PROP'.                                       "#EC NOTEXT
 ls_text_element-parent_artifact_name   = 'SoItems'.                            "#EC NOTEXT
 ls_text_element-parent_artifact_type   = 'ETYP'.                                       "#EC NOTEXT
-ls_text_element-text_symbol            = '007'.              "#EC NOTEXT
+ls_text_element-text_symbol            = '034'.              "#EC NOTEXT
 APPEND ls_text_element TO rt_text_elements.
 clear ls_text_element.
 ls_text_element-artifact_name          = 'OrdemItem'.                 "#EC NOTEXT
@@ -936,5 +943,57 @@ ls_text_element-parent_artifact_name   = 'Messasge'.                            
 ls_text_element-parent_artifact_type   = 'ETYP'.                                       "#EC NOTEXT
 ls_text_element-text_symbol            = '032'.              "#EC NOTEXT
 APPEND ls_text_element TO rt_text_elements.
+  endmethod.
+
+
+  method DEFINE_ASSOCIATIONS.
+*&---------------------------------------------------------------------*
+*&           Generated code for the MODEL PROVIDER BASE CLASS         &*
+*&                                                                     &*
+*&  !!!NEVER MODIFY THIS CLASS. IN CASE YOU WANT TO CHANGE THE MODEL  &*
+*&        DO THIS IN THE MODEL PROVIDER SUBCLASS!!!                   &*
+*&                                                                     &*
+*&---------------------------------------------------------------------*
+
+
+
+
+data:
+lo_annotation     type ref to /iwbep/if_mgw_odata_annotation,                   "#EC NEEDED
+lo_entity_type    type ref to /iwbep/if_mgw_odata_entity_typ,                   "#EC NEEDED
+lo_association    type ref to /iwbep/if_mgw_odata_assoc,                        "#EC NEEDED
+lo_ref_constraint type ref to /iwbep/if_mgw_odata_ref_constr,                   "#EC NEEDED
+lo_assoc_set      type ref to /iwbep/if_mgw_odata_assoc_set,                    "#EC NEEDED
+lo_nav_property   type ref to /iwbep/if_mgw_odata_nav_prop.                     "#EC NEEDED
+
+***********************************************************************************************************************************
+*   ASSOCIATIONS
+***********************************************************************************************************************************
+
+ lo_association = model->create_association(
+                            iv_association_name = 'HeaderToItems' "#EC NOTEXT
+                            iv_left_type        = 'SoHeader' "#EC NOTEXT
+                            iv_right_type       = 'SoItems' "#EC NOTEXT
+                            iv_right_card       = 'M' "#EC NOTEXT
+                            iv_left_card        = '1'  "#EC NOTEXT
+                            iv_def_assoc_set    = abap_false ). "#EC NOTEXT
+* Referential constraint for association - HeaderToItems
+lo_ref_constraint = lo_association->create_ref_constraint( ).
+lo_ref_constraint->add_property( iv_principal_property = 'OrderId'   iv_dependent_property = 'OrderId' ). "#EC NOTEXT
+lo_assoc_set = model->create_association_set( iv_association_set_name  = 'HeaderToItemsSet'                         "#EC NOTEXT
+                                              iv_left_entity_set_name  = 'SoHeaderSet'              "#EC NOTEXT
+                                              iv_right_entity_set_name = 'SoItemsSet'             "#EC NOTEXT
+                                              iv_association_name      = 'HeaderToItems' ).                                 "#EC NOTEXT
+
+
+***********************************************************************************************************************************
+*   NAVIGATION PROPERTIES
+***********************************************************************************************************************************
+
+* Navigation Properties for entity - SoHeader
+lo_entity_type = model->get_entity_type( iv_entity_name = 'SoHeader' ). "#EC NOTEXT
+lo_nav_property = lo_entity_type->create_navigation_property( iv_property_name  = 'toSoItems' "#EC NOTEXT
+                                                              iv_abap_fieldname = 'TOSOITEMS' "#EC NOTEXT
+                                                              iv_association_name = 'HeaderToItems' ). "#EC NOTEXT
   endmethod.
 ENDCLASS.
